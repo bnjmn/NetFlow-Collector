@@ -1,6 +1,6 @@
 import utils.settings as Settings
-import os, imp
-
+import os, imp, datetime
+  
 class PlugableBase(object):
    
     def load_modules(self,path):       
@@ -26,6 +26,7 @@ class PlugableBase(object):
         
     def run(self,data):
         #for each mod create a instance and run it
+        #TODO: might want to move the instantiation out to the init for the mods
         if self.mods:
             for key in self.mods:
                 return self.mods[key]().run(data)
@@ -34,15 +35,28 @@ class PluginBase(object):
     def __init__(self):
         #override this
         #implement some init code here
-        print "PluginBase init"
+        #print "PluginBase init"
+        pass
     def run(self, *args, **kwargs):
         #override this
         #implement some init code here
-        print "PluginBase run"
+        #print "PluginBase run"
         return self._run()
     def _run(self):
         #override this
         #implement some code here
-        print "PluginBase _run"
+        #print "PluginBase _run"
         return None
-        
+
+class DecimalToDotIP(PluginBase):
+    def numIP2strIP(self,ip):
+        '''
+        this function convert decimal ip to dot notation
+        '''
+        l = [str((ip >> 8*n) % 256) for n in range(4)]
+        l.reverse()
+        return ".".join(l)
+    
+class DateTimeSinceEpoch(PluginBase):
+    def getDateTime(self,secsSinceEpoch):
+        return datetime.datetime.utcfromtimestamp(secsSinceEpoch)

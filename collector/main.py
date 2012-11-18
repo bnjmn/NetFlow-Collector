@@ -25,10 +25,10 @@ class Collector(DatagramServer):
         print "Gevent Version %s"%gevent.__version__
         
         #TODO: move output file name to config
-        fname = "./NetFlow.%s.bin"%str(time.time()*100000)
+        #fname = "./NetFlow.%s.bin"%str(time.time()*100000)
         
         #WARN: might want to remove this after testing
-        self.out = open(fname,"wb")
+        #self.out = open(fname,"wb")
         
         #create tool instances
         self.interface = Interface()
@@ -44,16 +44,17 @@ class Collector(DatagramServer):
         return super(Collector,self).__init__(args)
     
     def done(self):
-        self.out.close()
+        #self.out.close()
         #really important to call del on the csv obj to ensure it closes correctly
         del self.csv
     
     def handle(self, rawData, address):
         Collector.x += 1
         #print '%s %s: got %r' % (Collector.x, address[0], data)  
-        self.out.write(rawData)
+        #self.out.write(rawData)
         
         interfacedData = self.interface.run(rawData)
+        #once the rawData is "interfaced" we are passing it around by reference
         self.parse.run(interfacedData)
         self.describe.run(interfacedData)
         self.standardize.run(interfacedData)
