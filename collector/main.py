@@ -3,10 +3,13 @@ Created on Oct 22, 2012
 
 @author: rweiss
 '''
-import utils.settings as settings
-import gevent
 
+import utils.settings as settings
+
+import gevent
 from gevent.server import DatagramServer
+
+import logging
 
 from interface import Interface
 from outputcsv import CSV
@@ -21,8 +24,25 @@ import os,time
 class Collector(DatagramServer):
     x = 0
     def __init__(self,args):
-        print "Starting Collector process in %s"%os.getcwd()
-        print "Gevent Version %s"%gevent.__version__
+
+        # create logger
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(logging.DEBUG)
+        
+        # create console handler and set level to debug
+        ch = logging.StreamHandler()
+        ch.setLevel(logging.DEBUG)
+        
+        # create formatter
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        
+        # add formatter to ch
+        ch.setFormatter(formatter)
+        
+        # add ch to logger
+        self.logger.addHandler(ch)        
+        self.logger.debug( "Starting Collector process in %s"%os.getcwd())
+        self.logger.debug( "Gevent Version %s"%gevent.__version__)
         
         #TODO: move output file name to config
         #fname = "./NetFlow.%s.bin"%str(time.time()*100000)
@@ -55,12 +75,17 @@ class Collector(DatagramServer):
         
         interfacedData = self.interface.run(rawData)
         #once the rawData is "interfaced" we are passing it around by reference
-        self.parse.run(interfacedData)
-        self.describe.run(interfacedData)
-        self.standardize.run(interfacedData)
-        self.transform.run(interfacedData)
-        self.partition.run(interfacedData)
-        self.csv.writeRow(self.csv.format(interfacedData))
+        # interfaced data must be iterable
+        try:
+            for record in interfacedData:
+                self.parse.run(record)
+                self.describe.run(record)
+                self.standardize.run(record)
+                self.transform.run(record)
+                self.partition.run(record)
+                self.csv.writeRow(self.csv.format(record))
+        except Exception as e:
+            self.logger.error("Interfaced data is not iterable %s"%(str(e)))
 
 if __name__ == '__main__':
     #TODO: move IP and port to config
