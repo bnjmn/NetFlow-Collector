@@ -23,13 +23,15 @@ class PlugableBase(object):
         self.mods = {}
         for key in mods.keys():
             self.mods.update(dict([(name, cls) for name, cls in mods[key].__dict__.items() if isinstance(cls, type) and name in self.plugins]))  
+            
+        #create running instances; forces singleton
+        self.modInstances={}
+        for key in self.mods:
+            self.modInstances[key]= self.mods[key]()
         
-    def run(self,data):
-        #for each mod create a instance and run it
-        #TODO: might want to move the instantiation out to the init for the mods
-        if self.mods:
-            for key in self.mods:
-                return self.mods[key]().run(data)
+    def run(self,dataObject):
+        for key in self.modInstances:
+            return self.modInstances[key].run(dataObject)
   
 class PluginBase(object):
     def __init__(self):
