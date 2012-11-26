@@ -1,1 +1,0 @@
-src_addr,dst_addr,next_hop,input_iface,output_iface,pkts_sent,bytes_sent,start_time,end_time,src_port,dst_port,ip_proto,tos,tcp_flags,src_as,dst_as,src_mask,dst_mask
