@@ -12,5 +12,10 @@ class Transform(PlugableBase):
         self.stage = "transform"
         return super(Transform,self).__init__()
 
-if __name__ == '__main__':
-    pass
+    def run(self,inputObject):
+        #TODO: need a driver for the parsing routine based on the way that the netflow record is laid out
+        #    this should be a plugin that is pluggable to run the field level plugins
+        
+        for key in self.modInstances:
+            self.modInstances[key].run(inputObject)
+        return inputObject
