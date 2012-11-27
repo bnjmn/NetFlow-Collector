@@ -13,10 +13,12 @@ class TcpFlags(PluginBase):
     SYN: The TCP SYN flag indicates a request to establish a connection.
     FIN: if this flag is set to 1 the connection is interrupted.
     '''
-    flags = ["FIN","SYN","RST","PSH","ACK","URG","ECE","CWR"]
+    def __init__(self):       
+        self.flags = ["FIN","SYN","RST","PSH","ACK","URG","ECE","CWR"]
+        
     def run(self,inputObject):
         #inputObject is a Flow Record at this point
         #l = [((inputObject.tcp_flags >> n)&0x1) for n in range(8)]
-        inputObject.tcp_flags = {TcpFlags.flags[n]:((inputObject.tcp_flags >> n)&0x1) for n in range(8)}
+        inputObject.tcp_flags = {self.flags[n]:((inputObject.tcp_flags >> n)&0x1) for n in range(8)}
         #print "TCP Flags 1: %s %s"%(inputObject.tcp_flags,d)     
         #no need to return anything since we are modding by reference

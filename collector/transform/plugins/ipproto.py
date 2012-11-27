@@ -10,7 +10,7 @@ class IpProto(PluginBase):
             inputObject.ip_proto = IpProto.protocols[inputObject.ip_proto]
         else:
             inputObject.ip_proto = "OTHER"
-        print "IP Proto %s"%inputObject.ip_proto 
+        #print "IP Proto %s"%inputObject.ip_proto 
         
         
         
