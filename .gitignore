@@ -1,2 +1,4 @@
 # Ignore these files
 *.pyc
+output.csv
+collector/output.csv

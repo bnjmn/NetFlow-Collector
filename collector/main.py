@@ -9,6 +9,8 @@ import utils.settings as settings
 import gevent
 from gevent.server import DatagramServer
 
+from Queue import Queue
+
 import logging
 
 from interface import Interface
@@ -58,6 +60,9 @@ class Collector(DatagramServer):
         self.transform = Transform()
         self.partition = Partition()
         
+        self.q = Queue()
+        self.inWindow = False
+        
         #TODO: move csv name to config
         self.csv = CSV("output.csv")
         
@@ -80,10 +85,28 @@ class Collector(DatagramServer):
             for record in interfacedData:
                 self.parse.run(record)
                 self.describe.run(record)
-                self.standardize.run(record)
-                self.transform.run(record)
-                self.partition.run(record)
-                self.csv.writeRow(self.csv.format(record))
+                #push the record onto the queue until window 
+                if not (self.inWindow):
+                    self.q.put(record)
+                    self.logger.debug("adding record to queue %s"%(repr(record)))
+                    if (self.q.qsize() == settings.SETTINGS.get("collector","describeWindow")):
+                        
+                        self.inWindow = True
+                        
+                        while not self.q.empty():
+                            item = self.q.get()
+                            self.logger.debug("processing record from queue %s"%(repr(item)))
+                            self.standardize.run(item)
+                            self.transform.run(item)
+                            self.partition.run(item)
+                            self.csv.writeRow(self.csv.format(item))
+                            self.q.task_done()
+                else:
+                    self.standardize.run(record)
+                    self.transform.run(record)
+                    self.partition.run(record)
+                    self.csv.writeRow(self.csv.format(record))
+                    
         except Exception as e:
             self.logger.error("Interfaced data is not iterable %s"%(str(e)))
 
