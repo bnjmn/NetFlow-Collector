@@ -13,5 +13,5 @@ class Parse(PlugableBase):
         
         for key in self.modInstances:
             self.modInstances[key].run(inputObject)
-        print "Parsed Input %s"%repr(inputObject)
+        #print "Parsed Input %s"%repr(inputObject)
         return inputObject

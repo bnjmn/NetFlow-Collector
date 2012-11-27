@@ -88,14 +88,14 @@ class Collector(DatagramServer):
                 #push the record onto the queue until window 
                 if not (self.inWindow):
                     self.q.put(record)
-                    self.logger.debug("adding record to queue %s"%(repr(record)))
-                    if (self.q.qsize() == settings.SETTINGS.get("collector","describeWindow")):
-                        
+                    #self.logger.debug("adding record to queue %s"%(repr(record)))
+                    if (self.q.qsize() == int(settings.SETTINGS.get("collector","describeWindow"))):
+                        self.logger.debug("Describe Window of %s records met, Begin Processing queue"%settings.SETTINGS.get("collector","describeWindow"))
                         self.inWindow = True
                         
                         while not self.q.empty():
                             item = self.q.get()
-                            self.logger.debug("processing record from queue %s"%(repr(item)))
+                            #self.logger.debug("processing record from queue %s"%(repr(item)))
                             self.standardize.run(item)
                             self.transform.run(item)
                             self.partition.run(item)

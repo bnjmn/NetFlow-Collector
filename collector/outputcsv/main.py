@@ -15,6 +15,7 @@ class CSV(object):
         self.csvWriter.writerows(rows)
         
     def writeRow(self,row):
+        print "Final output %s"%repr(row)
         self.csvWriter.writerow(row)
         
     def __del__(self):

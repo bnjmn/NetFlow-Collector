@@ -17,7 +17,7 @@ class PlugableBase(object):
     def __init__(self, *args, **kwargs):
         self.config = Settings.SETTINGS
 
-        self.plugins = self.config.get(self.stage,"plugins")       
+        self.plugins = self.config.getlist(self.config.get(self.stage,"plugins"))       
         mods = self.load_modules(self.config.get(self.stage,"pluginsdir"))
         
         self.mods = {}
@@ -31,7 +31,8 @@ class PlugableBase(object):
         
     def run(self,dataObject):
         for key in self.modInstances:
-            return self.modInstances[key].run(dataObject)
+            self.modInstances[key].run(dataObject)
+        return dataObject
   
 class PluginBase(object):
     def __init__(self):
