@@ -10,7 +10,7 @@ class SrcPort(PluginBase):
     # TODO: currently being read in a one string, need to parse to int array 
     # ports = Settings.SETTINGS.getlist(Settings.SETTINGS.get("transform","srcports"))
     ports = [53, 80, 110, 113, 443]
-    print " Approved Source Ports: %s" %ports
+    # print " Approved Source Ports: %s" %ports
     
     def run(self,inputObject):
         if(inputObject.src_port in SrcPort.ports):
@@ -18,5 +18,4 @@ class SrcPort(PluginBase):
             pass
         else:
             inputObject.src_port = "OTHER"
-        print "SRC Port %s"%inputObject.src_port 
-        
+        # print "SRC Port %s"%inputObject.src_port 
