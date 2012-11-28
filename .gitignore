@@ -2,3 +2,4 @@
 *.pyc
 output.csv
 collector/output.csv
+.pydevproject
