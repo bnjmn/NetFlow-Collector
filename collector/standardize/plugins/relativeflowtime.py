@@ -11,7 +11,7 @@ class RelativeFlowTime(DateTimeSinceEpoch):
     Get Time in seconds of Flow from start_time to end_time
     TODO: Fix Time ingestion. 
         Check SoftFlowd. Does not seem to be TimeSinceEpoch. Ranges are too big and everything is in year 2073
-        Same packets generate different times when rerun; Is this what we want
+        Same packets generate different times when rerun; Is this what we want?
     '''
     def run(self,inputObject):
         # print "endtime =  %s"%self.getDateTime(inputObject.end_time)
