@@ -21,6 +21,8 @@ from transform import Transform
 from partition import Partition
 from describe import Describe
 
+from score import Score
+
 import os,time
 
 class Collector(DatagramServer):
@@ -63,6 +65,7 @@ class Collector(DatagramServer):
         self.q = Queue()
         self.inWindow = False
         
+        self.score = Score()
         #TODO: move csv name to config
         self.csv = CSV("output.csv")
         
