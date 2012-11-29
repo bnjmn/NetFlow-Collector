@@ -28,6 +28,6 @@ class GeoIP(PluginBase):
         if(inputObject.continent == None):
             inputObject.continent = GeoIP.missingValue
         if(inputObject.country == None):
-            inputObject.continent = GeoIP.missingValue
+            inputObject.country = GeoIP.missingValue
         # print "Geo Info: %s"%info
         
