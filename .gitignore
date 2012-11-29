@@ -3,3 +3,4 @@
 output.csv
 collector/output.csv
 .pydevproject
+.settings/org.eclipse.core.resources.prefs
