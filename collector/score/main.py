@@ -2,6 +2,7 @@ from collector.base import PlugableBase
 
 import sys
 import jpype
+from subprocess import call
 
 import utils.settings as Settings
 
