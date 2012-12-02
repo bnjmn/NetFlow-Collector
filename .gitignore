@@ -1,10 +1,8 @@
 # Ignore these files
 *.pyc
-output.csv
-collector/output.csv
+*.csv
 .pydevproject
 .settings/org.eclipse.core.resources.prefs
 collector/score/models/
 utils/datadigest.jar
 collector/Skaion_model.bn5
-collector/out_sample.csv
