@@ -1,25 +1,43 @@
+from collector.base import ScorePlug
 import utils.settings as Settings
-from collector.base import PluginBase
-from subprocess import call
-
 import subprocess
+import csv
+import StringIO
 
-datadigestDir = str(Settings.SETTINGS.get("score","datadigestDir"))
+from collector.outputcsv import CSV
 
-pyPath = "-Dpython.path=" + str(datadigestDir)
-jythonExe = "./score/JythonBI.py"
+class SampleScore(ScorePlug):
 
-data_file = "./score/models/out_sample.csv"
-model_file = "./score/models/Skaion_model.bn5"
-outs = ["OUTCOME", "Two"]
-thrus = ["OUTCOME"]
+    datadigestDir = str(Settings.SETTINGS.get("score","datadigestDir"))
+    pyPath = "-Dpython.path=" + str(datadigestDir)
+    jythonExe = "./score/JythonBI.py"
 
-# call(["jython", pyPath, jythonExe, data_file, model_file, str(outs), str(thrus)])
-results = subprocess.Popen(["jython", pyPath, jythonExe, data_file, model_file, str(outs), str(thrus)], \
-                 stderr=subprocess.STDOUT, stdout=subprocess.PIPE).communicate()[0]
+#    data_file = "./score/models/out_sample.csv"
+    data_file = "./score/models/blah.csv"
+    model_file = "./score/models/Skaion_model.bn5"
+    outs = ["OUTCOME"]
+    thrus = ["OUTCOME"]
+    
+    outOfInterest = "outcome_malicious"
 
-s = subprocess.Popen(['cowsay', 'hello'], \
-      stderr=subprocess.STDOUT, stdout=subprocess.PIPE).communicate()[0]
-      
-print s
-print results
+
+    def run(self,inputObject):
+
+        self.csv = CSV(self.data_file)
+        self.csv.writeRow(self.csv.format(inputObject))
+        self.csv.__del__()
+        # subprocess.call(["jython", pyPath, jythonExe, data_file, model_file, str(outs), str(thrus)])
+        results = subprocess.Popen(["jython", self.pyPath, self.jythonExe, self.data_file, self.model_file, str(self.outs), str(self.thrus)], \
+                                   stderr=subprocess.STDOUT, stdout=subprocess.PIPE).communicate()[0]
+     
+        # print results
+        buff = StringIO.StringIO(results)
+        header = buff.readline().rstrip('\n').split(',')
+        pos = header.index(self.outOfInterest)
+#        print header
+        for line in buff:
+            d = line.rstrip('\n').split(',')
+            #TODO: Find a better way to avoid last line with just \n
+            if len(d) > 1:
+                print "Predicted %s = %s" %(self.outOfInterest, str(d[pos]))
+            

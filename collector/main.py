@@ -110,6 +110,8 @@ class Collector(DatagramServer):
                     self.partition.run(record)
                     self.csv.writeRow(self.csv.format(record))
                     
+                    self.score.run(record)
+                    
         except Exception as e:
             self.logger.error("Interfaced data is not iterable %s"%(str(e)))
 
