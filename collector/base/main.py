@@ -63,3 +63,8 @@ class DecimalToDotIP(PluginBase):
 class DateTimeSinceEpoch(PluginBase):
     def getDateTime(self,secsSinceEpoch):
         return datetime.datetime.utcfromtimestamp(secsSinceEpoch)
+
+#TODO: expand with more dynamic methods
+class ScorePlug(PluginBase):
+    def runBatchInference(self):
+        pass

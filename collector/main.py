@@ -21,6 +21,8 @@ from transform import Transform
 from partition import Partition
 from describe import Describe
 
+from score import Score
+
 import os,time
 
 class Collector(DatagramServer):
@@ -63,6 +65,7 @@ class Collector(DatagramServer):
         self.q = Queue()
         self.inWindow = False
         
+        self.score = Score()
         #TODO: move csv name to config
         self.csv = CSV("output.csv")
         
@@ -106,6 +109,8 @@ class Collector(DatagramServer):
                     self.transform.run(record)
                     self.partition.run(record)
                     self.csv.writeRow(self.csv.format(record))
+                    
+                    self.score.run(record)
                     
         except Exception as e:
             self.logger.error("Interfaced data is not iterable %s"%(str(e)))
