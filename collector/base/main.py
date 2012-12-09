@@ -1,5 +1,6 @@
 import utils.settings as Settings
-import os, imp, datetime
+import os, imp, datetime, subprocess, StringIO
+import collector.outputcsv as CSV
   
 class PlugableBase(object):
    
@@ -66,5 +67,10 @@ class DateTimeSinceEpoch(PluginBase):
 
 #TODO: expand with more dynamic methods
 class ScorePlug(PluginBase):
-    def runBatchInference(self):
+    datadigestDir = str(Settings.SETTINGS.get("score","datadigestDir"))
+    pyPath = "-Dpython.path=" + str(datadigestDir)
+    jythonExe = "./score/JythonBI.py"
+        
+    def runBatchInference(self, inputObject):
+        #print "Hello runBatchInference"
         pass
