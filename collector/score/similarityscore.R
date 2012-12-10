@@ -3,7 +3,7 @@ library( XML , quietly=TRUE)
 args <- commandArgs(TRUE)
 
   if ( length(args) != 2 ) {
-    # TODO: ADD some error code
+    # TODO: ADD some error code for bad args
     print("Input and output files not specified. Using defaults (may produce errors).")
     #	print("Use <Path>\Rscript.exe scoring_script3.R <sBI_file> <model_file>")
   } else {
@@ -11,10 +11,12 @@ args <- commandArgs(TRUE)
     modelFile <- args[2]
     unconnectedVars <- args[3]
   }
-  unconnectedVars <- c("tcp_flag_URG")
-
+  # This is specific to the "Geo 5b5 AS Query Using NoA Binning All Parts.bn5" model
+  # TODO: Implement function to extract unconnected nodes
+    unconnectedVars <- c("tcp_flag_URG")
+    
   model <- xmlTreeParse( modelFile, useInternal = TRUE)
-  
+
   ######## PARSE XML #######
   top <- xmlRoot(model)
   ##### get StateNames Here
@@ -49,7 +51,7 @@ args <- commandArgs(TRUE)
                           DataType = xmlSApply( middle, function(x) xmlGetAttr(x[["DATATYPE"]], "NAME"))
                         )
   )
-  
+
   ##### Final INFO
   info <- merge( info2, info1, by = "field", all = TRUE)
   ##### Through vars
@@ -65,7 +67,6 @@ args <- commandArgs(TRUE)
     model_summary<-info
   }
   # print(model_summary)
-
 
 #########################XML DATA Processed################################
 #### Begin Scoring Algorithm ####
@@ -86,6 +87,7 @@ output_scoring<-function(BIfile,model_summary,unconnectedVars){
     #numThru<-0
     info<-model_summary
   }
+  
   ##initiate buffer
   buffer <- 1 + M  #################################################
   
@@ -98,16 +100,10 @@ output_scoring<-function(BIfile,model_summary,unconnectedVars){
   }
   
   TEMP <- NULL
-  
-  #BI <- BI[sample(1:dim(BI)[1],1000),]
   TEMP <- BI[,1]
-  
   ###Take out unconnectedVars
-  info<-subset(info,info$field!=unconnectedVars)
-  M<-M-length(unconnectedVars)
-  #fieldRec <- N
-  #for (fieldRec in 1:2) {
-  ##Score each var of each record
+  info <- subset(info,info$field!=unconnectedVars)
+  M <- M - length(unconnectedVars)
   for (fieldRec in 1:M) {
     
     fieldInfo <- NULL #Store all Info applicable to current field here
@@ -115,7 +111,6 @@ output_scoring<-function(BIfile,model_summary,unconnectedVars){
     fieldName <- info[fieldRec,"field"]
     fCol <- buffer + (info[fieldRec,"cumLevel"] - info[fieldRec,"numLevels"] + 1)
     lCol <- buffer + info[fieldRec,"cumLevel"]
-    
     fieldInfo <- cbind( PRIOR = BI[,which(names(BI)==fieldName)], BI[,fCol:lCol] ) 
     position <- apply( fieldInfo[,2:dim(fieldInfo)[2]], 1, which.max) 
     posterior <- apply( fieldInfo[,2:dim(fieldInfo)[2]], 1, max)
@@ -136,10 +131,6 @@ output_scoring<-function(BIfile,model_summary,unconnectedVars){
     TEMP <- cbind(TEMP, fieldInfo )
   }
   
-  #print(dim(TEMP))
-  
-  #print(dim(sapply(TEMP[,sapply(TEMP,class) == "logical"], as.numeric)))
-
   ###Score each record; ifElse to handle single record case
   if(dim(TEMP)[1] == 1) {
     TEMP <- cbind( TEMP, TOTAL_SCORE =   
@@ -149,19 +140,8 @@ output_scoring<-function(BIfile,model_summary,unconnectedVars){
     TEMP <- cbind( TEMP, TOTAL_SCORE =   
                      apply(sapply(TEMP[,sapply(TEMP,class) == "logical"], as.numeric ), 1, sum)/(M) )    
   }
-  
-  ###Reattach Through vars and write scores
-  #if(length(Thru_data_frame)>0){
-  #  write.csv( cbind(TEMP,Thru_data_frame), 
-  #             file = paste("TESTING_score_", BIfile, sep=""), 
-  #             row.names = FALSE, na = "")
-  #}else
-  #  
-  #  write.csv( TEMP, 
-  #             file = paste("TESTING_score_", BIfile, sep=""), 
-  #             row.names = FALSE, na = "")
-  write.csv(TEMP, stdout(), row.names=FALSE, quote=FALSE)
-  
+  write(TEMP$TOTAL_SCORE, stdout())
 }
 
-output_scoring(BIfile,model_summary, unconnectedVars)
+## Call that^! function
+output_scoring(BIfile, model_summary, unconnectedVars)

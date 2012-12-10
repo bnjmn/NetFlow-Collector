@@ -9,7 +9,8 @@ from collector.outputcsv import CSV
 
 class SampleScore(ScorePlug):
     def __init__(self):
-        self.data_file = "./blah.csv"
+        self.data_file = "./score/models/blah.csv"
+        self.inf_file = "./score/models/blahInf.csv"
         #self.model_file = "./score/models/Skaion_model.bn5"
         self.model_file = "./score/models/Geo 5b5 AS Query Using NoA Binning All Parts.bn5"        
         self.outs = ["bytes_sent",
@@ -25,9 +26,7 @@ class SampleScore(ScorePlug):
                      "tcp_flag_RST",
                      "tcp_flag_SYN",
                      "tcp_flag_URG"] 
-        self.thrus = self.outs
-    
-        self.outOfInterest = "ip_proto_udp"
+        self.thrus = self.outs   
     
     # TODO: Move this to ScorePlug, Complains 'module' not iterable    
     def createCSV(self, inputObject):
@@ -46,22 +45,12 @@ class SampleScore(ScorePlug):
         results = self.getResults()
         #print results
         
-        f = open("./blahInf.csv", "w")
+        f = open(self.inf_file, "w")
         f.write(results)
         f.close()
         
-        realResults = subprocess.Popen(["Rscript", "./score/similarityscore.R", "./blahInf.csv", self.model_file], \
+        realResults = subprocess.Popen(["Rscript", "./score/similarityscore.R", self.inf_file, self.model_file], \
                                    stderr=subprocess.STDOUT, stdout=subprocess.PIPE).communicate()[0]     
-        print realResults
-        buff = StringIO.StringIO(realResults)
-        header = buff.readline().rstrip('\n').split(',')
-        #pos = header.index(self.outOfInterest)
-        pos = header.index("TOTAL_SCORE")
-#        print header
-        for line in buff:
-            d = line.rstrip('\n').split(',')
-            #TODO: Find a better way to avoid last line with just \n
-            if len(d) > 1:
-                #print "Predicted %s = %s" %(self.outOfInterest, str(d[pos]))
-                print "AS Model Similarity Score = %s" %(str(d[pos]))
+        print "AS Model Similarity Score = %s " %(str(realResults).strip())
+        print "Observed actual value is %s" %str(inputObject.continent)
             
