@@ -1,6 +1,7 @@
 # Ignore these files
 *.pyc
 *.csv
+*.dqi
 .pydevproject
 .settings/org.eclipse.core.resources.prefs
 collector/score/models/
