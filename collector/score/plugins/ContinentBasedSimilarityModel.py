@@ -7,7 +7,7 @@ import StringIO
 
 from collector.outputcsv import CSV
 
-class SampleScore(ScorePlug):
+class ContinentBasedSimilarityModel(ScorePlug):
     def __init__(self):
         self.data_file = "./score/models/blah.csv"
         self.inf_file = "./score/models/blahInf.csv"

@@ -1,6 +1,5 @@
 import utils.settings as Settings
-import os, imp, datetime, subprocess, StringIO
-import collector.outputcsv as CSV
+import os, imp, datetime
   
 class PlugableBase(object):
    
