@@ -1,0 +1,33 @@
+NetFlow-Collector
+-----------------
+
+Collect netflow.
+
+## Install and dev
+
+Requires:
+
+- gevent (dev version; must have gevent.server.DatagramServer) 
+    - greenlet
+- jython
+
+    sudo apt-get install python-dev
+    pip install greenlet
+    pip install cython -e git://github.com/surfly/gevent.git#egg=gevent
+
+Download, unpack and install `dpkt`
+
+    ./setup.py install
+
+## Softflowd
+
+Softflow can be used to replay captured packets and serve Netflow data for testing.
+
+Download v0.9.9 at http://code.google.com/p/softflowd/downloads/list
+
+    sudo apt-get install libpcap-dev
+    ./configure
+    make
+    sudo make install
+
+

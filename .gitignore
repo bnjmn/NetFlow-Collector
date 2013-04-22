@@ -6,3 +6,4 @@
 collector/score/models/
 utils/datadigest.jar
 collector/Skaion_model.bn5
+.venv
