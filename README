@@ -30,4 +30,11 @@ Download v0.9.9 at http://code.google.com/p/softflowd/downloads/list
     make
     sudo make install
 
+Send packets with 
+
+    softflowd -v 5 -r file_name.dmp -n127.0.0.1:6005
+
+OR from a directory with
+
+    for file in *; do softflowd -n 127.0.0.1:6005 -v 5 -r "$file"; done 
 
