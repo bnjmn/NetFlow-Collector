@@ -12,7 +12,7 @@ Requires:
 - jython
 
     sudo apt-get install python-dev
-    pip install greenlet
+    pip install greenlet jython
     pip install cython -e git://github.com/surfly/gevent.git#egg=gevent
 
 Download, unpack and install `dpkt`
